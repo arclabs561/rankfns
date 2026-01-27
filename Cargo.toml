@@ -1,0 +1,14 @@
+[package]
+name = "rankfns"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.80"
+license = "MIT OR Apache-2.0"
+description = "IR ranking math kernels (no indexing): BM25/TF-IDF/LM transforms."
+publish = true
+
+[dependencies]
+
+[lints]
+workspace = true
+
