@@ -9,6 +9,3 @@ publish = true
 
 [dependencies]
 
-[lints]
-workspace = true
-
