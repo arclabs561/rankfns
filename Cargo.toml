@@ -8,6 +8,7 @@ description = "IR ranking math kernels (no indexing): BM25/TF-IDF/LM transforms.
 repository = "https://github.com/arclabs561/rankfns"
 homepage = "https://github.com/arclabs561/rankfns"
 documentation = "https://docs.rs/rankfns"
+readme = "README.md"
 keywords = ["information-retrieval", "bm25", "tfidf", "ranking"]
 categories = ["algorithms", "mathematics", "science"]
 publish = true
