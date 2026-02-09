@@ -26,7 +26,6 @@ let b = 0.75f32;
 let idf = bm25_idf_plus1(n_docs, df);
 let tf_norm = bm25_tf(tf, doc_len, avg_doc_len, k1, b);
 let score = idf * tf_norm;
-
 assert!(score.is_finite());
 assert!(score >= 0.0);
 ```
