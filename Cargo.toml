@@ -15,3 +15,6 @@ publish = true
 
 [dependencies]
 
+
+[package.metadata.docs.rs]
+rustdoc-args = ["--cfg", "docsrs"]
