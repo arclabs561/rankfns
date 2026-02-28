@@ -8,12 +8,14 @@ Small ranking-math kernels for IR (no indexing).
 - **Normalization**: Document length normalization helpers.
 - **Language-model smoothing**: query-likelihood components (Jelinek–Mercer, Dirichlet).
 
-If you want an inverted index, pair this with `postings` (storage) or `lexir` (scoring pipeline).
+If you want an inverted index, pair this with `postings` (storage) or `lexir` (scoring pipeline). For fusion and reranking of ranked lists (RRF, CombMNZ, MMR, etc.), use **rankops**.
 
 ## Example (BM25 pieces)
 
 ```rust
-use rankfns::{bm25_idf_plus1, bm25_tf};let n_docs = 1_000u32;
+use rankfns::{bm25_idf_plus1, bm25_tf};
+
+let n_docs = 1_000u32;
 let df = 10u32;
 let tf = 3.0f32;
 let doc_len = 120.0f32;
