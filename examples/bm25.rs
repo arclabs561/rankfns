@@ -16,8 +16,16 @@ fn main() {
 
     // --- BM25 IDF ---
     println!("=== BM25 IDF (log(1 + (N-df+0.5)/(df+0.5))) ===");
-    println!("  'rust' (df={}): {:.4}", df_rust, bm25_idf_plus1(n_docs, df_rust));
-    println!("  'the'  (df={}): {:.4}", df_the, bm25_idf_plus1(n_docs, df_the));
+    println!(
+        "  'rust' (df={}): {:.4}",
+        df_rust,
+        bm25_idf_plus1(n_docs, df_rust)
+    );
+    println!(
+        "  'the'  (df={}): {:.4}",
+        df_the,
+        bm25_idf_plus1(n_docs, df_the)
+    );
 
     // --- BM25 TF normalization (k1=1.2, b=0.75) ---
     println!("\n=== BM25 TF (k1=1.2, b=0.75) ===");
@@ -40,15 +48,31 @@ fn main() {
     let tf_log = tf_transform(3, TfVariant::LogScaled);
     let idf_std = idf_transform(n_docs, df_rust, IdfVariant::Standard);
     let idf_smooth = idf_transform(n_docs, df_rust, IdfVariant::Smoothed);
-    println!("  Linear TF(3)={:.2}, LogScaled TF(3)={:.4}", tf_lin, tf_log);
-    println!("  Standard IDF={:.4}, Smoothed IDF={:.4}", idf_std, idf_smooth);
+    println!(
+        "  Linear TF(3)={:.2}, LogScaled TF(3)={:.4}",
+        tf_lin, tf_log
+    );
+    println!(
+        "  Standard IDF={:.4}, Smoothed IDF={:.4}",
+        idf_std, idf_smooth
+    );
     println!("  TF-IDF (linear, standard): {:.4}", tf_lin * idf_std);
 
     // --- Language model smoothing ---
     println!("\n=== Language model P(t|D) ===");
     let p_corpus = 0.01; // corpus probability of "rust"
-    let p_jm = lm_smoothed_p(3.0, 12.0, p_corpus, SmoothingMethod::JelinekMercer { lambda: 0.7 });
-    let p_dir = lm_smoothed_p(3.0, 12.0, p_corpus, SmoothingMethod::Dirichlet { mu: 1000.0 });
+    let p_jm = lm_smoothed_p(
+        3.0,
+        12.0,
+        p_corpus,
+        SmoothingMethod::JelinekMercer { lambda: 0.7 },
+    );
+    let p_dir = lm_smoothed_p(
+        3.0,
+        12.0,
+        p_corpus,
+        SmoothingMethod::Dirichlet { mu: 1000.0 },
+    );
     println!("  Jelinek-Mercer (lambda=0.7): {:.4}", p_jm);
     println!("  Dirichlet      (mu=1000):    {:.4}", p_dir);
 }
