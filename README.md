@@ -1,6 +1,10 @@
 # rankfns
 
-Small ranking-math kernels for IR (no indexing).
+[![crates.io](https://img.shields.io/crates/v/rankfns.svg)](https://crates.io/crates/rankfns)
+[![Documentation](https://docs.rs/rankfns/badge.svg)](https://docs.rs/rankfns)
+[![CI](https://github.com/arclabs561/rankfns/actions/workflows/ci.yml/badge.svg)](https://github.com/arclabs561/rankfns/actions/workflows/ci.yml)
+
+IR ranking math kernels (no indexing): BM25, TF-IDF, language-model smoothing.
 
 ## Scope
 
@@ -29,3 +33,7 @@ let score = idf * tf_norm;
 assert!(score.is_finite());
 assert!(score >= 0.0);
 ```
+
+## License
+
+MIT OR Apache-2.0
