@@ -4,7 +4,7 @@
 [![Documentation](https://docs.rs/rankfns/badge.svg)](https://docs.rs/rankfns)
 [![CI](https://github.com/arclabs561/rankfns/actions/workflows/ci.yml/badge.svg)](https://github.com/arclabs561/rankfns/actions/workflows/ci.yml)
 
-IR ranking math kernels (no indexing): BM25, TF-IDF, language-model smoothing.
+IR ranking math kernels.
 
 ## Scope
 
