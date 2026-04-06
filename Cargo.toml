@@ -13,6 +13,8 @@ keywords = ["search", "bm25", "tfidf", "ranking"]
 categories = ["algorithms", "mathematics", "science"]
 publish = true
 
+[workspace]
+
 [dependencies]
 
 [dev-dependencies]
