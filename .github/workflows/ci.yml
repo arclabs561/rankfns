@@ -24,3 +24,9 @@ jobs:
       - name: test
         run: cargo test --all-targets
 
+      - name: Semver check
+        if: github.event_name == 'pull_request'
+        run: |
+          cargo install cargo-semver-checks --locked || true
+          cargo semver-checks
+
