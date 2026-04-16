@@ -2,7 +2,7 @@
 # https://github.com/repository-settings/app
 
 repository:
-  description: "IR ranking math kernels (no indexing): BM25/TF-IDF/LM transforms."
+  description: "Scoring functions for information retrieval (BM25, TF-IDF, language models)"
   homepage: "https://docs.rs/rankfns"
   private: false
   has_issues: true
