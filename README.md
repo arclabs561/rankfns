@@ -4,7 +4,7 @@
 [![Documentation](https://docs.rs/rankfns/badge.svg)](https://docs.rs/rankfns)
 [![CI](https://github.com/arclabs561/rankfns/actions/workflows/ci.yml/badge.svg)](https://github.com/arclabs561/rankfns/actions/workflows/ci.yml)
 
-IR ranking math kernels in Rust (no indexing): BM25, TF-IDF, and
+IR ranking math kernels (no indexing): BM25, TF-IDF, and
 language-model transforms.
 
 ## Scope
