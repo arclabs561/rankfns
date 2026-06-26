@@ -35,6 +35,13 @@ assert!(score.is_finite());
 assert!(score >= 0.0);
 ```
 
+## Examples
+
+Runnable examples live in [`examples/`](examples/):
+
+- `bm25` scores a tiny corpus with BM25 and TF-IDF, the canonical lexical ranking math.
+- `bm25_pipeline` wires the kernels into a real retrieval pass: `postings` generates candidates, `rankfns` scores them, the division of labor this crate is built for.
+
 ## License
 
 MIT OR Apache-2.0
