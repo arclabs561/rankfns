@@ -34,9 +34,7 @@ fn idf_transform_exact() {
     // Standard: ln(N/df) = ln(1000/10) = ln(100).
     assert!((idf_transform(1000, 10, IdfVariant::Standard) - 100.0_f32.ln()).abs() < TOL);
     // Smoothed equals the bm25_idf_plus1 formula.
-    assert!(
-        (idf_transform(100, 10, IdfVariant::Smoothed) - bm25_idf_plus1(100, 10)).abs() < TOL
-    );
+    assert!((idf_transform(100, 10, IdfVariant::Smoothed) - bm25_idf_plus1(100, 10)).abs() < TOL);
 }
 
 #[test]
@@ -55,6 +53,11 @@ fn lm_smoothed_p_exact() {
     let mle = lm_smoothed_p(3.0, 10.0, 0.01, SmoothingMethod::Dirichlet { mu: 0.0 });
     assert!((mle - 0.3).abs() < TOL);
     // Jelinek-Mercer: lam*(tf/dl) + (1-lam)*p_c = 0.2*0.3 + 0.8*0.01 = 0.068.
-    let jm = lm_smoothed_p(3.0, 10.0, 0.01, SmoothingMethod::JelinekMercer { lambda: 0.2 });
+    let jm = lm_smoothed_p(
+        3.0,
+        10.0,
+        0.01,
+        SmoothingMethod::JelinekMercer { lambda: 0.2 },
+    );
     assert!((jm - 0.068).abs() < TOL);
 }
