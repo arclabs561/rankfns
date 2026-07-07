@@ -2,14 +2,12 @@
 
 [![crates.io](https://img.shields.io/crates/v/rankfns.svg)](https://crates.io/crates/rankfns)
 [![Documentation](https://docs.rs/rankfns/badge.svg)](https://docs.rs/rankfns)
-[![CI](https://github.com/arclabs561/rankfns/actions/workflows/ci.yml/badge.svg)](https://github.com/arclabs561/rankfns/actions/workflows/ci.yml)
 
-IR ranking math kernels (no indexing): BM25, TF-IDF, and
-language-model transforms.
+Scoring functions for information retrieval.
 
 ## Scope
 
-- **BM25 / TF-IDF**: Standard scoring functions (Robertson-Walker, etc.).
+- **BM25 / TF-IDF**: Standard scoring functions.
 - **Normalization**: Document length normalization helpers.
 - **Language-model smoothing**: query-likelihood components (Jelinek–Mercer, Dirichlet).
 
