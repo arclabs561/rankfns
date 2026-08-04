@@ -15,7 +15,10 @@ repository:
   delete_branch_on_merge: true
 
   topics:
-    - information-retrieval
     - bm25
-    - tf-idf
+    - information-retrieval
+    - ranking
     - rust
+    - scoring
+    - tf-idf
+    - tfidf
