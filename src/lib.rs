@@ -28,16 +28,29 @@ pub fn bm25_idf_plus1(n_docs: u32, df: u32) -> f32 {
 ///
 /// Robustness notes:
 /// - `tf <= 0` returns 0.0.
-/// - `avg_doc_len` and the denominator are clamped away from 0.
+/// - Any non-finite input returns 0.0.
+/// - Negative document length is treated as zero; negative `k1` is treated as
+///   zero; `b` is clamped to `[0, 1]`; and average length is clamped away from
+///   zero.
+/// - Finite inputs always produce a finite, non-negative result.
 pub fn bm25_tf(tf: f32, doc_len: f32, avg_doc_len: f32, k1: f32, b: f32) -> f32 {
-    if tf <= 0.0 {
+    if !tf.is_finite()
+        || !doc_len.is_finite()
+        || !avg_doc_len.is_finite()
+        || !k1.is_finite()
+        || !b.is_finite()
+        || tf <= 0.0
+    {
         return 0.0;
     }
-    let avg = avg_doc_len.max(1e-9);
-    let k1 = k1.max(0.0);
-    let b = b.clamp(0.0, 1.0);
-    let denom = tf + k1 * (1.0 - b + b * (doc_len / avg));
-    (tf * (k1 + 1.0)) / denom.max(1e-9)
+    let tf = f64::from(tf);
+    let doc_len = f64::from(doc_len.max(0.0));
+    let avg = f64::from(avg_doc_len.max(1e-9));
+    let k1 = f64::from(k1.max(0.0));
+    let b = f64::from(b.clamp(0.0, 1.0));
+    let length_norm = 1.0 - b + b * doc_len / avg;
+    let score = (k1 + 1.0) / (1.0 + k1 * length_norm / tf);
+    score.min(f64::from(f32::MAX)) as f32
 }
 
 /// TF transform variants.
@@ -78,19 +91,25 @@ pub fn idf_transform(n_docs: u32, df: u32, variant: IdfVariant) -> f32 {
         return 0.0;
     }
     let n = n_docs as f32;
-    let d = df as f32;
     match variant {
-        IdfVariant::Standard => (n / d).ln(),
-        IdfVariant::Smoothed => (1.0 + (n - d + 0.5) / (d + 0.5)).ln(),
+        IdfVariant::Standard => (n / df as f32).ln(),
+        IdfVariant::Smoothed => {
+            let d = df.min(n_docs) as f32;
+            (1.0 + (n - d + 0.5) / (d + 0.5)).ln()
+        }
     }
 }
 
 /// Query-likelihood smoothing method (language-model retrieval).
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum SmoothingMethod {
-    /// Jelinek–Mercer interpolation with `lambda` in `[0,1]`.
+    /// Jelinek–Mercer interpolation with a document-model weight in `[0, 1]`.
+    ///
+    /// This crate computes `lambda * P(t|D) + (1 - lambda) * P(t|C)`.
+    /// Lucene-derived tools commonly use `lambda` for the collection-model
+    /// weight instead; convert such a value with `1 - lambda`.
     JelinekMercer {
-        /// Interpolation weight.
+        /// Weight assigned to the document model.
         lambda: f32,
     },
     /// Dirichlet smoothing with `mu >= 0`.
@@ -111,19 +130,37 @@ impl Default for SmoothingMethod {
 /// - `tf`: term frequency in doc
 /// - `doc_len`: document length
 /// - `p_corpus`: corpus probability \(P(t|C)\)
+///
+/// Non-finite inputs and negative `tf` or `doc_len` return zero. For finite
+/// inputs, `p_corpus` and interpolation weights are clamped to their valid
+/// ranges, `mu` is clamped to zero, and `tf` is capped at `doc_len`. The result
+/// is therefore a finite probability in `[0, 1]`.
 pub fn lm_smoothed_p(tf: f32, doc_len: f32, p_corpus: f32, smoothing: SmoothingMethod) -> f32 {
-    let p_corpus = p_corpus.clamp(0.0, 1.0);
+    if !tf.is_finite() || !doc_len.is_finite() || !p_corpus.is_finite() || tf < 0.0 || doc_len < 0.0
+    {
+        return 0.0;
+    }
+
+    let tf = f64::from(tf.min(doc_len));
+    let doc_len = f64::from(doc_len);
+    let p_corpus = f64::from(p_corpus.clamp(0.0, 1.0));
     match smoothing {
         SmoothingMethod::JelinekMercer { lambda } => {
-            let lam = lambda.clamp(0.0, 1.0);
+            if !lambda.is_finite() {
+                return 0.0;
+            }
+            let lambda = f64::from(lambda.clamp(0.0, 1.0));
             let p_doc = if doc_len > 0.0 { tf / doc_len } else { 0.0 };
-            lam * p_doc + (1.0 - lam) * p_corpus
+            (lambda * p_doc + (1.0 - lambda) * p_corpus) as f32
         }
         SmoothingMethod::Dirichlet { mu } => {
-            let mu = mu.max(0.0);
+            if !mu.is_finite() {
+                return 0.0;
+            }
+            let mu = f64::from(mu.max(0.0));
             let denom = doc_len + mu;
             if denom > 0.0 {
-                (tf + mu * p_corpus) / denom
+                ((tf + mu * p_corpus) / denom) as f32
             } else {
                 0.0
             }

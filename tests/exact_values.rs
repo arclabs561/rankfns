@@ -52,7 +52,8 @@ fn lm_smoothed_p_exact() {
     // Dirichlet with mu -> 0 reduces to the MLE tf/dl = 0.3.
     let mle = lm_smoothed_p(3.0, 10.0, 0.01, SmoothingMethod::Dirichlet { mu: 0.0 });
     assert!((mle - 0.3).abs() < TOL);
-    // Jelinek-Mercer: lam*(tf/dl) + (1-lam)*p_c = 0.2*0.3 + 0.8*0.01 = 0.068.
+    // Jelinek-Mercer (lambda is the document weight):
+    // lam*(tf/dl) + (1-lam)*p_c = 0.2*0.3 + 0.8*0.01 = 0.068.
     let jm = lm_smoothed_p(
         3.0,
         10.0,

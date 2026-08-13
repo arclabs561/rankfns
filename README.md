@@ -13,6 +13,11 @@ Scoring functions for information retrieval.
 
 If you want an inverted index, pair this with `postings` (storage) or `lexir` (scoring pipeline). For fusion and reranking of ranked lists (RRF, CombMNZ, MMR, etc.), use **rankops**.
 
+Inputs outside the usual scoring domains are handled conservatively: invalid
+floating-point values return zero and bounded parameters are clamped. In
+`JelinekMercer`, `lambda` is the document-model weight; some Lucene-derived
+tools use the same name for the collection-model weight.
+
 ## Example (BM25 pieces)
 
 ```rust
