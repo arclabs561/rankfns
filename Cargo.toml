@@ -7,10 +7,11 @@ license = "MIT OR Apache-2.0"
 description = "Scoring functions for information retrieval"
 repository = "https://github.com/arclabs561/rankfns"
 homepage = "https://github.com/arclabs561/rankfns"
-documentation = "https://github.com/arclabs561/rankfns#readme"
+documentation = "https://docs.rs/rankfns"
 readme = "README.md"
 keywords = ["search", "bm25", "tfidf", "ranking"]
 categories = ["algorithms", "mathematics", "science"]
+include = ["/src", "/tests", "/examples", "/README.md", "/CHANGELOG.md", "/LICENSE*"]
 publish = true
 
 [workspace]
