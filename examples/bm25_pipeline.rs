@@ -166,7 +166,7 @@ fn main() {
             (doc_id, score)
         })
         .collect();
-    bm25_scores.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap_or(std::cmp::Ordering::Equal));
+    bm25_scores.sort_by(|a, b| b.1.total_cmp(&a.1));
 
     println!("=== BM25 (k1={k1}, b={b}) ===");
     for (doc_id, score) in &bm25_scores {
@@ -190,7 +190,7 @@ fn main() {
             (doc_id, score)
         })
         .collect();
-    tfidf_scores.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap_or(std::cmp::Ordering::Equal));
+    tfidf_scores.sort_by(|a, b| b.1.total_cmp(&a.1));
 
     println!("\n=== TF-IDF (log-scaled TF, standard IDF) ===");
     for (doc_id, score) in &tfidf_scores {
@@ -233,7 +233,7 @@ fn main() {
             (doc_id, log_score)
         })
         .collect();
-    lm_scores.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap_or(std::cmp::Ordering::Equal));
+    lm_scores.sort_by(|a, b| b.1.total_cmp(&a.1));
 
     println!("\n=== Dirichlet LM (mu=1000, log query-likelihood) ===");
     for (doc_id, score) in &lm_scores {
