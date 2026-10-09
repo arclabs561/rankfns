@@ -13,6 +13,11 @@ Scoring functions for information retrieval.
 
 If you want an inverted index, pair this with `postings` (storage) or `lexir` (scoring pipeline). For fusion and reranking of ranked lists (RRF, CombMNZ, MMR, etc.), use **rankops**.
 
+`bm25_idf_plus1` times `bm25_tf` is Lucene's BM25 (IDF
+`ln(1 + (N - df + 0.5) / (df + 0.5))`) with exact document lengths and the
+`(k1 + 1)` numerator that Lucene 8 dropped, so scores are `(k1 + 1)` times
+Lucene 8+ scores and rank documents the same way.
+
 Inputs outside the usual scoring domains are handled conservatively: invalid
 floating-point values return zero and bounded parameters are clamped. In
 `JelinekMercer`, `lambda` is the document-model weight; some Lucene-derived

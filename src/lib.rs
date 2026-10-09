@@ -1,3 +1,4 @@
+#![doc = include_str!("../README.md")]
 //! `rankfns`: ranking math kernels for IR.
 //!
 //! This crate is intentionally **index-free**: it contains math transforms and scoring kernels
