@@ -19,7 +19,7 @@ publish = true
 [dependencies]
 
 [dev-dependencies]
-postings = "0.4"
+postings = "0.5"
 
 [package.metadata.docs.rs]
 rustdoc-args = ["--cfg", "docsrs"]
