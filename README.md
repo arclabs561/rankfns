@@ -5,13 +5,14 @@
 
 Scoring functions for information retrieval.
 
-## Scope
+## Usage
 
-- **BM25 / TF-IDF**: Standard scoring functions.
-- **Normalization**: Document length normalization helpers.
-- **Language-model smoothing**: query-likelihood components (Jelinek–Mercer, Dirichlet).
+```toml
+[dependencies]
+rankfns = "0.1"
+```
 
-If you want an inverted index, pair this with `postings` (storage) or `lexir` (scoring pipeline). For fusion and reranking of ranked lists (RRF, CombMNZ, MMR, etc.), use **rankops**.
+The functions compute scores; they do not build an index.
 
 `bm25_idf_plus1` times `bm25_tf` is Lucene's BM25 (IDF
 `ln(1 + (N - df + 0.5) / (df + 0.5))`) with exact document lengths and the
@@ -20,8 +21,8 @@ Lucene 8+ scores and rank documents the same way.
 
 Inputs outside the usual scoring domains are handled conservatively: invalid
 floating-point values return zero and bounded parameters are clamped. In
-`JelinekMercer`, `lambda` is the document-model weight; some Lucene-derived
-tools use the same name for the collection-model weight.
+`JelinekMercer`, `lambda` weights the document model; some Lucene-derived
+tools use the same name for the collection model’s weight.
 
 ## Example (BM25 pieces)
 
@@ -39,16 +40,15 @@ let b = 0.75f32;
 let idf = bm25_idf_plus1(n_docs, df);
 let tf_norm = bm25_tf(tf, doc_len, avg_doc_len, k1, b);
 let score = idf * tf_norm;
-assert!(score.is_finite());
-assert!(score >= 0.0);
+assert!((score - 6.867).abs() < 0.001);
 ```
 
 ## Examples
 
 Runnable examples live in [`examples/`](examples/):
 
-- `bm25` scores a tiny corpus with BM25 and TF-IDF, the canonical lexical ranking math.
-- `bm25_pipeline` wires the kernels into a real retrieval pass: `postings` generates candidates, `rankfns` scores them, the division of labor this crate is built for.
+- `cargo run --example bm25` scores a small corpus with BM25 and TF-IDF.
+- `cargo run --example bm25_pipeline` retrieves candidates with `postings` and scores them with `rankfns`.
 
 ## License
 

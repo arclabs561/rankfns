@@ -1,6 +1,6 @@
 # Contributing to rankfns
 
-Thanks for your interest. rankfns is iR ranking math kernels (no indexing): BM25/TF-IDF/LM transforms.
+rankfns provides scoring functions for information retrieval.
 
 ## Before you start
 
