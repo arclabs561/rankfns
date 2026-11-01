@@ -50,6 +50,16 @@ Runnable examples live in [`examples/`](examples/):
 - `cargo run --example bm25` scores a small corpus with BM25 and TF-IDF.
 - `cargo run --example bm25_pipeline` retrieves candidates with `postings` and scores them with `rankfns`.
 
+Part of the `bm25_pipeline` output for the query `rust search engine`:
+
+```text
+=== BM25 (k1=1.2, b=0.75) ===
+  doc 3 [Rust for search systems]: 2.4143
+  doc 0 [Rust ownership]: 1.2684
+  doc 1 [Search engine indexing]: 1.2108
+  doc 7 [Inverted index design]: 1.2108
+```
+
 ## License
 
 MIT OR Apache-2.0
