@@ -4,6 +4,20 @@ All notable changes to this project are documented here. Format based on [Keep a
 
 ## [Unreleased]
 
+## [0.1.6] - 2026-11-01
+
+### Changed
+
+- `bm25_tf` and `lm_smoothed_p` return zero for non-finite inputs, compute in
+  `f64`, and always return a finite, non-negative score for finite inputs.
+  `lm_smoothed_p` caps `tf` at `doc_len`, so its result stays in `[0, 1]`.
+- `IdfVariant::Smoothed` caps `df` at `n_docs`.
+- Documented that `JelinekMercer::lambda` is the document-model weight (some
+  Lucene-derived tools use it for the collection-model weight).
+- The BM25 pipeline example uses `postings 0.6`.
+- The published package ships only sources, tests, examples and docs, and
+  `documentation` points at docs.rs.
+
 ## [0.1.5] - 2026-07-09
 
 ### Changed
@@ -24,6 +38,8 @@ Maintenance release.
 
 - Tightened scope and hardened kernels.
 
+[Unreleased]: https://github.com/arclabs561/rankfns/compare/v0.1.6...HEAD
+[0.1.6]: https://github.com/arclabs561/rankfns/compare/v0.1.5...v0.1.6
 [0.1.5]: https://github.com/arclabs561/rankfns/compare/v0.1.4...v0.1.5
 [0.1.4]: https://github.com/arclabs561/rankfns/compare/v0.1.3...v0.1.4
 [0.1.3]: https://github.com/arclabs561/rankfns/releases/tag/v0.1.3
