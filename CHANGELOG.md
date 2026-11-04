@@ -4,6 +4,8 @@ All notable changes to this project are documented here. Format based on [Keep a
 
 ## [Unreleased]
 
+## [0.1.7] - 2026-11-04
+
 ### Fixed
 
 - `IdfVariant::Standard` caps `df` at `n_docs`, as `IdfVariant::Smoothed`
