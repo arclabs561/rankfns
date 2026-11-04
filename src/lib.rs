@@ -87,13 +87,16 @@ pub fn tf_transform(tf: u32, variant: TfVariant) -> f32 {
 }
 
 /// IDF transform.
+///
+/// Both variants return 0.0 when `n_docs == 0` or `df == 0`, and cap `df` at
+/// `n_docs`, so the result is never negative.
 pub fn idf_transform(n_docs: u32, df: u32, variant: IdfVariant) -> f32 {
     if n_docs == 0 || df == 0 {
         return 0.0;
     }
     let n = n_docs as f32;
     match variant {
-        IdfVariant::Standard => (n / df as f32).ln(),
+        IdfVariant::Standard => (n / df.min(n_docs) as f32).ln(),
         IdfVariant::Smoothed => {
             let d = df.min(n_docs) as f32;
             (1.0 + (n - d + 0.5) / (d + 0.5)).ln()

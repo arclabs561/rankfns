@@ -20,6 +20,16 @@ fn smoothed_idf_uses_one_invalid_stat_policy() {
 }
 
 #[test]
+fn standard_idf_caps_df_at_n_docs() {
+    // ln(N / df) with df <= N is never negative (Manning et al., IIR eq. 6.7).
+    assert_eq!(idf_transform(10, 100, IdfVariant::Standard), 0.0);
+    assert_eq!(
+        idf_transform(10, 100, IdfVariant::Standard),
+        idf_transform(10, 10, IdfVariant::Standard)
+    );
+}
+
+#[test]
 fn bm25_tf_returns_zero_for_nonfinite_inputs() {
     let cases = [
         (f32::NAN, 10.0, 10.0, 1.2, 0.75),
