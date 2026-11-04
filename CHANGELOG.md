@@ -4,6 +4,11 @@ All notable changes to this project are documented here. Format based on [Keep a
 
 ## [Unreleased]
 
+### Fixed
+
+- `IdfVariant::Standard` caps `df` at `n_docs`, as `IdfVariant::Smoothed`
+  already did, so `df > n_docs` gives 0.0 instead of a negative IDF.
+
 ## [0.1.6] - 2026-11-01
 
 ### Changed
