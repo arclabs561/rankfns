@@ -20,6 +20,31 @@ fn smoothed_idf_uses_one_invalid_stat_policy() {
 }
 
 #[test]
+fn common_terms_retain_their_idf_in_large_collections() {
+    for (n, df) in [
+        (10_000_000, 10_000_000),
+        (10_000_000, 9_999_999),
+        (10_000_000, u32::MAX),
+        (u32::MAX, u32::MAX - 1),
+        (u32::MAX, u32::MAX),
+    ] {
+        let d = f64::from(df.min(n));
+        let standard = (f64::from(n) / d).ln();
+        let smoothed = ((f64::from(n) + 1.0) / (d + 0.5)).ln();
+        for (actual, expected) in [
+            (idf_transform(n, df, IdfVariant::Standard), standard),
+            (idf_transform(n, df, IdfVariant::Smoothed), smoothed),
+            (bm25_idf_plus1(n, df), smoothed),
+        ] {
+            assert!(
+                (f64::from(actual) - expected).abs() <= expected * 1e-6,
+                "N={n}, df={df}: got {actual}, expected {expected}"
+            );
+        }
+    }
+}
+
+#[test]
 fn standard_idf_caps_df_at_n_docs() {
     // ln(N / df) with df <= N is never negative (Manning et al., IIR eq. 6.7).
     assert_eq!(idf_transform(10, 100, IdfVariant::Standard), 0.0);
