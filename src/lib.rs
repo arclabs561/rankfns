@@ -17,12 +17,7 @@
 /// - `df == 0` returns 0.0 (no evidence).
 /// - `df > n_docs` is clamped to `n_docs` to avoid `NaN` from an invalid log argument.
 pub fn bm25_idf_plus1(n_docs: u32, df: u32) -> f32 {
-    if n_docs == 0 || df == 0 {
-        return 0.0;
-    }
-    let n = n_docs as f32;
-    let d = (df.min(n_docs)) as f32;
-    (((n - d + 0.5) / (d + 0.5)) + 1.0).ln()
+    idf_transform(n_docs, df, IdfVariant::Smoothed)
 }
 
 /// BM25 term-frequency normalization (the TF part).
@@ -94,14 +89,15 @@ pub fn idf_transform(n_docs: u32, df: u32, variant: IdfVariant) -> f32 {
     if n_docs == 0 || df == 0 {
         return 0.0;
     }
-    let n = n_docs as f32;
-    match variant {
-        IdfVariant::Standard => (n / df.min(n_docs) as f32).ln(),
-        IdfVariant::Smoothed => {
-            let d = df.min(n_docs) as f32;
-            (1.0 + (n - d + 0.5) / (d + 0.5)).ln()
-        }
-    }
+    let df = df.min(n_docs);
+    let missing = f64::from(n_docs - df);
+    let df = f64::from(df);
+    // Compute ln(1 + ratio) without rounding common terms' tiny ratios away.
+    let ratio = match variant {
+        IdfVariant::Standard => missing / df,
+        IdfVariant::Smoothed => (missing + 0.5) / (df + 0.5),
+    };
+    ratio.ln_1p() as f32
 }
 
 /// Query-likelihood smoothing method (language-model retrieval).
