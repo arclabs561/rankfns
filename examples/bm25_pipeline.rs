@@ -200,7 +200,7 @@ fn main() {
 
     // -- 3c. Language model scoring (Dirichlet, mu=1000) --
     // Corpus probability P(t|C) = total occurrences of t / total corpus length.
-    let total_len: f32 = (0..n_docs).map(|id| index.document_len(id) as f32).sum();
+    let corpus_probs = corpus_probabilities(&index, &query);
 
     let mut lm_scores: Vec<(u32, f32)> = candidates
         .iter()
@@ -210,13 +210,9 @@ fn main() {
             // In log space to avoid underflow.
             let log_score: f32 = query
                 .iter()
-                .map(|term| {
+                .zip(&corpus_probs)
+                .map(|(term, &p_corpus)| {
                     let tf = index.term_frequency(doc_id, term.as_str()) as f32;
-                    // Corpus frequency: sum of tf across all docs.
-                    let cf: f32 = (0..n_docs)
-                        .map(|id| index.term_frequency(id, term.as_str()) as f32)
-                        .sum();
-                    let p_corpus = if total_len > 0.0 { cf / total_len } else { 0.0 };
                     let p = lm_smoothed_p(
                         tf,
                         doc_len,
@@ -266,4 +262,48 @@ fn title_for<'a>(doc_id: u32, titles: &'a [(u32, &'a str)]) -> &'a str {
         .find(|(id, _)| *id == doc_id)
         .map(|(_, t)| *t)
         .unwrap_or("?")
+}
+
+fn corpus_probabilities(index: &PostingsIndex<String>, query: &[String]) -> Vec<f32> {
+    let total_len: u64 = index
+        .document_ids()
+        .map(|id| u64::from(index.document_len(id)))
+        .sum();
+    if total_len == 0 {
+        return vec![0.0; query.len()];
+    }
+
+    query
+        .iter()
+        .map(|term| {
+            let count: u64 = index
+                .postings_iter(term.as_str())
+                .map(|(_, tf)| u64::from(tf))
+                .sum();
+            (count as f64 / total_len as f64) as f32
+        })
+        .collect()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn corpus_probabilities_follow_live_tokens_across_sparse_ids() {
+        let mut index = PostingsIndex::new();
+        let query = ["x", "absent", "y", "x"].map(String::from);
+        index.add_document(0, &["x".into()]).unwrap();
+        index.delete_document(0);
+        assert_eq!(corpus_probabilities(&index, &query), [0.0; 4]);
+
+        index.add_document(17, &["x".into(), "x".into()]).unwrap();
+        index
+            .add_document(u32::MAX, &["x".into(), "y".into()])
+            .unwrap();
+        assert_eq!(
+            corpus_probabilities(&index, &query),
+            [0.75, 0.0, 0.25, 0.75]
+        );
+    }
 }
